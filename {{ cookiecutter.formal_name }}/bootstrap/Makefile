@@ -10,11 +10,11 @@ pyversion.h:
 	gcc -o {{ cookiecutter.app_name }} $^ $(CFLAGS) $(LDFLAGS) -fPIE
 
 clean:
-	rm -rf ../package/usr/bin
+	rm -rf ../{{ cookiecutter.app_name }}-{{ cookiecutter.version }}/usr/bin
 	rm -f {{ cookiecutter.app_name }} pyversion.h
 
 install: all
-	mkdir -p ../package/usr/bin
-	cp {{ cookiecutter.app_name }} ../package/usr/bin
+	mkdir -p ../{{ cookiecutter.app_name }}-{{ cookiecutter.version }}/usr/bin
+	cp {{ cookiecutter.app_name }} ../{{ cookiecutter.app_name }}-{{ cookiecutter.version }}/usr/bin
 
 .PHONY: all clean install
