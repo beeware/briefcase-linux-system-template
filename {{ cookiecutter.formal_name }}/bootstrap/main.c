@@ -95,11 +95,7 @@ int main(int argc, char *argv[]) {
     path = malloc(PATH_MAX);
 
     // The unpacked form of the stdlib
-{%- if cookiecutter.vendor_base == "redhat" %}
-    strcpy(path, "/usr/lib64/python" PY_TAG);
-{%- else %}
-    strcpy(path, "/usr/lib/python" PY_TAG);
-{%- endif %}
+    strcpy(path, "/usr/{{ cookiecutter.lib_dir }}/python" PY_TAG);
     printf("- %s\n", path);
     wtmp_str = Py_DecodeLocale(path, NULL);
     status = PyWideStringList_Append(&config.module_search_paths, wtmp_str);
@@ -111,11 +107,7 @@ int main(int argc, char *argv[]) {
     PyMem_RawFree(wtmp_str);
 
     // Add the stdlib binary modules path
-{%- if cookiecutter.vendor_base == "redhat" %}
-    strcpy(path, "/usr/lib64/python" PY_TAG "/lib-dynload");
-{%- else %}
-    strcpy(path, "/usr/lib/python" PY_TAG "/lib-dynload");
-{%- endif %}
+    strcpy(path, "/usr/{{ cookiecutter.lib_dir }}/python" PY_TAG "/lib-dynload");
     printf("- %s\n", path);
     wtmp_str = Py_DecodeLocale(path, NULL);
     status = PyWideStringList_Append(&config.module_search_paths, wtmp_str);
@@ -128,7 +120,7 @@ int main(int argc, char *argv[]) {
 
     // Add the app path
     strcpy(path, install_path);
-    strcat(path, "/lib/{{ cookiecutter.app_name }}/app");
+    strcat(path, "/{{ cookiecutter.lib_dir }}/{{ cookiecutter.app_name }}/app");
     printf("- %s\n", path);
     wtmp_str = Py_DecodeLocale(path, NULL);
     status = PyWideStringList_Append(&config.module_search_paths, wtmp_str);
@@ -141,7 +133,7 @@ int main(int argc, char *argv[]) {
 
     // Add the app_packages path
     strcpy(path, install_path);
-    strcat(path, "/lib/{{ cookiecutter.app_name }}/app_packages");
+    strcat(path, "/{{ cookiecutter.lib_dir }}/{{ cookiecutter.app_name }}/app_packages");
     printf("- %s\n", path);
     wtmp_str = Py_DecodeLocale(path, NULL);
     status = PyWideStringList_Append(&config.module_search_paths, wtmp_str);

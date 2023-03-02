@@ -1,7 +1,7 @@
 # Generated using Briefcase {{ cookiecutter.briefcase_version }} for {{ cookiecutter.docker_base_image }}, Python {{ cookiecutter.python_version|py_tag }}
 [paths]
-app_path = "package/usr/lib/{{ cookiecutter.app_name}}/app"
-app_packages_path = "package/usr/lib/{{ cookiecutter.app_name}}/app_packages"
+app_path = "package/usr/{{ cookiecutter.lib_dir }}/{{ cookiecutter.app_name}}/app"
+app_packages_path = "package/usr/{{ cookiecutter.lib_dir }}/{{ cookiecutter.app_name}}/app_packages"
 
 icon.16 = "package/usr/share/icons/hicolor/16x16/apps/{{ cookiecutter.bundle }}.{{ cookiecutter.app_name }}.png"
 icon.32 = "package/usr/share/icons/hicolor/32x32/apps/{{ cookiecutter.bundle }}.{{ cookiecutter.app_name }}.png"
