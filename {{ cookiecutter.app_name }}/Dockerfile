@@ -13,12 +13,12 @@ RUN apt-get update -y && \
         python{{ cookiecutter.python_version|py_tag }}-dev \
         python{{ cookiecutter.python_version|py_tag }}-venv \
         python{{ cookiecutter.python_version|py_tag }}-pip
-{% elif cookiecutter.vendor_base == "redhat" %}
+{% elif cookiecutter.vendor_base == "rhel" %}
 # Install System python
 RUN dnf install -y \
     python{{ cookiecutter.python_version|py_tag }}-devel \
     python{{ cookiecutter.python_version|py_tag }}-pip
-{% elif cookiecutter.vendor_base == "archlinux" %}
+{% elif cookiecutter.vendor_base == "arch" %}
 # Install System python
 RUN pacman -Syu --noconfirm \
     python{{ cookiecutter.python_version|py_tag }}
@@ -39,9 +39,9 @@ RUN groupadd --non-unique --gid $HOST_GID briefcase && \
 ARG SYSTEM_REQUIRES
 {% if cookiecutter.vendor_base == "debian" %}
 RUN apt-get install --no-install-recommends -y build-essential ${SYSTEM_REQUIRES}
-{% elif cookiecutter.vendor_base == "redhat" %}
+{% elif cookiecutter.vendor_base == "rhel" %}
 RUN dnf install -y rpm-build ${SYSTEM_REQUIRES}
-{% elif cookiecutter.vendor_base == "archlinux" %}
+{% elif cookiecutter.vendor_base == "arch" %}
 RUN pacman -Syu  --noconfirm base-devel ${SYSTEM_REQUIRES}
 {% endif %}
 

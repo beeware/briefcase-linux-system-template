@@ -16,7 +16,7 @@
     "docker_base_image": "ubuntu:20.04",
     "vendor_base": "debian",
     "dockerfile_extra_content": "",
-    "lib_dir": "lib{% if cookiecutter.vendor_base == 'redhat' %}64{% endif %}",
+    "lib_dir": "lib{% if cookiecutter.vendor_base == 'rhel' %}64{% endif %}",
     "_extensions": [
         "briefcase.integrations.cookiecutter.PythonVersionExtension"
     ]
