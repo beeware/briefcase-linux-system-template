@@ -40,7 +40,7 @@ ARG SYSTEM_REQUIRES
 {% if cookiecutter.vendor_base == "debian" %}
 RUN apt-get install --no-install-recommends -y build-essential ${SYSTEM_REQUIRES}
 {% elif cookiecutter.vendor_base == "rhel" %}
-RUN dnf install -y rpm-build ${SYSTEM_REQUIRES}
+RUN dnf install -y rpm-build gcc make pkgconf-pkg-config ${SYSTEM_REQUIRES}
 {% elif cookiecutter.vendor_base == "arch" %}
 RUN pacman -Syu  --noconfirm base-devel ${SYSTEM_REQUIRES}
 {% endif %}
