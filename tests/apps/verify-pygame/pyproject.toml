@@ -1,0 +1,42 @@
+[tool.briefcase]
+project_name = "Hello Pygame"
+bundle = "org.beeware"
+version = "0.0.1"
+url = "https://beeware.org/"
+license = "BSD license"
+author = 'Brutus'
+author_email = "contact@beeware.org"
+
+[tool.briefcase.app.verify-pygame]
+formal_name = "Hello Pygame"
+description = "A Pygame test app"
+icon = "src/verify_pygame/resources/verify-pygame"
+sources = ['src/verify_pygame']
+requires = [
+    'pygame~=2.2.0',
+]
+
+[tool.briefcase.app.verify-pygame.linux]
+requires = [
+]
+
+[tool.briefcase.app.verify-pygame.linux.system.debian]
+system_requires = [
+]
+
+system_runtime_requires = [
+]
+
+[tool.briefcase.app.verify-pygame.linux.system.rhel]
+system_requires = [
+]
+
+system_runtime_requires = [
+]
+
+[tool.briefcase.app.verify-pygame.linux.system.arch]
+system_requires = [
+]
+
+system_runtime_requires = [
+]
