@@ -11,6 +11,8 @@ author_email = "contact@beeware.org"
 template = "../../.."
 formal_name = "Hello PySide2"
 description = "A PySide2 test app"
+long_description = """More details about the app should go here.
+"""
 icon = "src/verify_pyside2/resources/verify-pyside2"
 sources = ['src/verify_pyside2']
 requires = [

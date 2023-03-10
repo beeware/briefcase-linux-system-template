@@ -12,6 +12,8 @@ template = "../../.."
 formal_name = "Hello PySide6"
 description = "A PySide6 test app"
 icon = "src/verify_pyside6/resources/verify-pyside6"
+long_description = """More details about the app should go here.
+"""
 sources = ['src/verify_pyside6']
 requires = [
     'pyside6>=6.2.4',

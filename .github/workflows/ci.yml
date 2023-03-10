@@ -31,8 +31,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12-dev" ]
-        # PPB configs aren't known to work on Linux Flatpak at this time.
-        framework: ["toga", "pyside2", "pyside6"]
+        framework: ["toga", "pyside2", "pyside6", "ppb"]
 
         exclude:
           # Pyside2 doesn't publish 3.11+ wheels
