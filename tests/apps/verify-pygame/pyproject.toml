@@ -10,6 +10,8 @@ author_email = "contact@beeware.org"
 [tool.briefcase.app.verify-pygame]
 formal_name = "Hello Pygame"
 description = "A Pygame test app"
+long_description = """More details about the app should go here.
+"""
 icon = "src/verify_pygame/resources/verify-pygame"
 sources = ['src/verify_pygame']
 requires = [
