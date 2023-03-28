@@ -4,7 +4,7 @@ bundle = "org.beeware"
 version = "0.0.1"
 url = "https://beeware.org/"
 license = "BSD license"
-author = 'Brutus'
+author = "Brutus"
 author_email = "contact@beeware.org"
 
 [tool.briefcase.app.verify-toga]
@@ -13,7 +13,7 @@ description = "A Toga test app"
 icon = "src/verify_toga/resources/verify-toga"
 long_description = """More details about the app should go here.
 """
-sources = ['src/verify_toga']
+sources = ["src/verify_toga"]
 requires = [
 ]
 
@@ -25,9 +25,9 @@ requires = [
 [tool.briefcase.app.verify-toga.linux.system.debian]
 system_requires = [
     # Needed to compile pycairo wheel
-    'libcairo2-dev',
+    "libcairo2-dev",
     # Needed to compile PyGObject wheel
-    'libgirepository1.0-dev',
+    "libgirepository1.0-dev",
 ]
 
 system_runtime_requires = [
@@ -37,36 +37,47 @@ system_runtime_requires = [
     "libgirepository-1.0-1",
     "gir1.2-gtk-3.0",
     # Needed to provide WebKit2 at runtime
-    "libwebkit2gtk-4.0-37",
-    "gir1.2-webkit2-4.0",
+    # "libwebkit2gtk-4.0-37",
+    # "gir1.2-webkit2-4.0",
 ]
 
 [tool.briefcase.app.verify-toga.linux.system.rhel]
 system_requires = [
     # Needed to compile pycairo wheel
-    'cairo-gobject-devel',
+    "cairo-gobject-devel",
     # Needed to compile PyGObject wheel
-    'gobject-introspection-devel',
+    "gobject-introspection-devel",
 ]
 
 system_runtime_requires = [
     # Needed to provide GTK
     "gtk3",
     # Needed to provide WebKit2 at runtime
-    "webkit2gtk3",
+    # "webkit2gtk3",
 ]
 
 [tool.briefcase.app.verify-toga.linux.system.arch]
 system_requires = [
-    # Needed to compile pycairo wheel
-    'cairo',
+    # Needed to provide GTK
+    "gtk3",
+     # Needed to compile pycairo wheel
+    "cairo",
     # Needed to compile PyGObject wheel
-    'gobject-introspection',
+    "gobject-introspection",
+    # Dependencies that GTK looks for at runtime, that need to be
+    # in the build environment
+    "libcanberra",
+    # Needed to provide WebKit2 at runtime
+    # "webkit2gtk",
 ]
 
 system_runtime_requires = [
     # Needed to provide GTK
-    "gtk",
+    "gtk3",
+    # Needed to provide PyGObject bindings
+    "gobject-introspection-runtime",
+    # Dependencies that GTK looks for at runtime
+    "libcanberra",
     # Needed to provide WebKit2 at runtime
-    "webkit2gtk",
+    # "webkit2gtk",
 ]
