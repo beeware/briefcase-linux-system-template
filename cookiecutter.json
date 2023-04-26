@@ -9,6 +9,7 @@
     "revision": "1",
     "arch": "amd64",
     "bundle": "com.example",
+    "bundle_identifier": "{{ cookiecutter.bundle }}.{{ cookiecutter.app_name|replace('_', '-') }}",
     "url": "https://example.com",
     "description": "Short description of app",
     "long_description": "Long description of app",
