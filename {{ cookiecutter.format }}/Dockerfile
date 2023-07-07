@@ -27,7 +27,7 @@ RUN pacman -Syu --noconfirm \
 RUN python3 -m ensurepip
 {%- endif %}
 
-{% if cookiecutter.use_non_root_user == "True" -%}
+{% if cookiecutter.use_non_root_user -%}
 # Ensure Docker user UID:GID matches host user UID:GID (beeware/briefcase#403)
 # Use --non-unique to avoid problems when the UID:GID of the host user
 # collides with entries provided by the Docker container.
@@ -48,7 +48,7 @@ RUN dnf install -y rpm-build gcc make pkgconf-pkg-config ${SYSTEM_REQUIRES}
 RUN pacman -Syu  --noconfirm base-devel ${SYSTEM_REQUIRES}
 {%- endif %}
 
-{% if cookiecutter.use_non_root_user == "True" -%}
+{% if cookiecutter.use_non_root_user -%}
 # Use the brutus user for operations in the container
 USER brutus
 {%- endif %}

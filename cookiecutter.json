@@ -18,7 +18,7 @@
     "docker_base_image": "ubuntu:20.04",
     "vendor_base": "debian",
     "dockerfile_extra_content": "",
-    "use_non_root_user": "True",
+    "use_non_root_user": true,
     "lib_dir": "lib{% if cookiecutter.vendor_base == 'rhel' %}64{% endif %}",
     "_extensions": [
         "briefcase.integrations.cookiecutter.PythonVersionExtension"
