@@ -31,11 +31,12 @@ RUN python3 -m ensurepip
 # Ensure Docker user UID:GID matches host user UID:GID (beeware/briefcase#403)
 # Use --non-unique to avoid problems when the UID:GID of the host user
 # collides with entries provided by the Docker container.
+# Create Briefcase data dir so Docker's bind mount doesn't assign root as owner of .cache at runtime.
 ARG HOST_UID
 ARG HOST_GID
 RUN groupadd --non-unique --gid $HOST_GID briefcase && \
     useradd --non-unique --uid $HOST_UID --gid $HOST_GID brutus --home /home/brutus && \
-    mkdir -p /home/brutus && chown brutus:briefcase /home/brutus
+    mkdir -p /home/brutus/.cache/briefcase && chown -R brutus:briefcase /home/brutus
 {%- endif %}
 
 # As root, install system packages required by app
