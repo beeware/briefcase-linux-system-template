@@ -3,6 +3,10 @@ FROM {{ cookiecutter.docker_base_image }}
 # Set the working directory
 WORKDIR /app
 
+# Disable pip's warnings
+ENV PIP_ROOT_USER_ACTION=ignore \
+    PIP_NO_WARN_SCRIPT_LOCATION=0
+
 {% if cookiecutter.vendor_base == "debian" -%}
 # Make sure installation of tzdata is non-interactive
 ENV DEBIAN_FRONTEND="noninteractive"
@@ -52,6 +56,9 @@ RUN pacman -Syu  --noconfirm base-devel ${SYSTEM_REQUIRES}
 # Use the brutus user for operations in the container
 USER brutus
 {%- endif %}
+
+# Install latest pip for user
+RUN python3 -m pip install --user --upgrade pip
 
 # ========== START USER PROVIDED CONTENT ==========
 {{ cookiecutter.dockerfile_extra_content }}
