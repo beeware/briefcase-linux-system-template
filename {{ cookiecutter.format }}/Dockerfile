@@ -8,8 +8,8 @@ ENV PIP_ROOT_USER_ACTION=ignore \
     PIP_NO_WARN_SCRIPT_LOCATION=0
 
 {% if cookiecutter.vendor_base == "debian" -%}
-# Make sure installation of tzdata is non-interactive
-ENV DEBIAN_FRONTEND="noninteractive"
+# Run apt non-interactively; use ARG so this only applies while building the image
+ARG DEBIAN_FRONTEND="noninteractive"
 
 # Install System python
 RUN apt-get update -y && \
@@ -30,6 +30,13 @@ RUN pacman -Syu --noconfirm \
 # Ensure pip is available
 RUN python3 -m ensurepip
 {%- endif %}
+
+# Upgrade pip et alia
+# PEP 668 allows distros to mark the system Python as "externally managed". With this
+# configuration, `pip install` will error when using the system Python. This setting
+# ignores this configuration in the distro and allows for installing the latest pip.
+RUN PIP_BREAK_SYSTEM_PACKAGES=1 \
+    python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel
 
 {% if cookiecutter.use_non_root_user -%}
 # Ensure Docker user UID:GID matches host user UID:GID (beeware/briefcase#403)
@@ -56,9 +63,6 @@ RUN pacman -Syu  --noconfirm base-devel ${SYSTEM_REQUIRES}
 # Use the brutus user for operations in the container
 USER brutus
 {%- endif %}
-
-# Install latest pip for user
-RUN python3 -m pip install --user --upgrade pip
 
 # ========== START USER PROVIDED CONTENT ==========
 {{ cookiecutter.dockerfile_extra_content }}
