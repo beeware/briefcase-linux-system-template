@@ -8,6 +8,7 @@ author = 'Brutus'
 author_email = "contact@beeware.org"
 
 [tool.briefcase.app.verify-pygame]
+template = "../../.."
 formal_name = "Hello Pygame"
 description = "A Pygame test app"
 long_description = """More details about the app should go here.
