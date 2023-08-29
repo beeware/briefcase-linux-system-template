@@ -22,11 +22,16 @@ RUN apt-get update -y && \
 RUN dnf install -y \
       python{{ cookiecutter.python_version|py_tag }}-devel \
       python{{ cookiecutter.python_version|py_tag }}-pip
+{%- elif cookiecutter.vendor_base == "suse" -%}
+# Install System python
+RUN zypper install -y \
+    python{{ cookiecutter.python_version|py_tag }}-devel \
+    python{{ cookiecutter.python_version|py_tag }}-pip
 {%- elif cookiecutter.vendor_base == "arch" -%}
 # Install System python
 RUN pacman -Syu --noconfirm \
-      python{{ cookiecutter.python_version|py_tag }} \
-      python-pip
+    python{{ cookiecutter.python_version|py_tag }} \
+    python-pip
 {%- endif %}
 
 # Upgrade pip et alia
@@ -54,6 +59,9 @@ ARG SYSTEM_REQUIRES
 RUN apt-get install --no-install-recommends -y build-essential ${SYSTEM_REQUIRES}
 {%- elif cookiecutter.vendor_base == "rhel" -%}
 RUN dnf install -y rpm-build gcc make pkgconf-pkg-config ${SYSTEM_REQUIRES}
+{%- elif cookiecutter.vendor_base == "suse" -%}
+RUN zypper install -y -t pattern devel_basis
+RUN zypper install -y rpm-build pkgconf-pkg-config ${SYSTEM_REQUIRES}
 {%- elif cookiecutter.vendor_base == "arch" -%}
 RUN pacman -Syu  --noconfirm base-devel ${SYSTEM_REQUIRES}
 {%- endif %}
