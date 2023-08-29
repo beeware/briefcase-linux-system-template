@@ -14,21 +14,19 @@ ARG DEBIAN_FRONTEND="noninteractive"
 # Install System python
 RUN apt-get update -y && \
     apt-get install --no-install-recommends -y \
-        python{{ cookiecutter.python_version|py_tag }}-dev \
-        python{{ cookiecutter.python_version|py_tag }}-venv \
-        python{{ cookiecutter.python_version|py_tag }}-pip
+      python{{ cookiecutter.python_version|py_tag }}-dev \
+      python{{ cookiecutter.python_version|py_tag }}-venv \
+      python{{ cookiecutter.python_version|py_tag }}-pip
 {%- elif cookiecutter.vendor_base == "rhel" -%}
 # Install System python
 RUN dnf install -y \
-    python{{ cookiecutter.python_version|py_tag }}-devel \
-    python{{ cookiecutter.python_version|py_tag }}-pip
+      python{{ cookiecutter.python_version|py_tag }}-devel \
+      python{{ cookiecutter.python_version|py_tag }}-pip
 {%- elif cookiecutter.vendor_base == "arch" -%}
 # Install System python
 RUN pacman -Syu --noconfirm \
-    python{{ cookiecutter.python_version|py_tag }}
-
-# Ensure pip is available
-RUN python3 -m ensurepip
+      python{{ cookiecutter.python_version|py_tag }} \
+      python-pip
 {%- endif %}
 
 # Upgrade pip et alia
