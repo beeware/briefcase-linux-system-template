@@ -41,6 +41,19 @@ RUN pacman -Syu --noconfirm \
 RUN PIP_BREAK_SYSTEM_PACKAGES=1 \
     python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel
 
+# As root, install system packages required by app
+ARG SYSTEM_REQUIRES
+{% if cookiecutter.vendor_base == "debian" -%}
+RUN apt-get install --no-install-recommends -y build-essential ${SYSTEM_REQUIRES}
+{%- elif cookiecutter.vendor_base == "rhel" -%}
+RUN dnf install -y rpm-build gcc make pkgconf-pkg-config ${SYSTEM_REQUIRES}
+{%- elif cookiecutter.vendor_base == "suse" -%}
+RUN zypper install -y -t pattern devel_basis
+RUN zypper install -y pwdutils rpm-build pkgconf-pkg-config ${SYSTEM_REQUIRES}
+{%- elif cookiecutter.vendor_base == "arch" -%}
+RUN pacman -Syu  --noconfirm base-devel ${SYSTEM_REQUIRES}
+{%- endif %}
+
 {% if cookiecutter.use_non_root_user -%}
 # Ensure Docker user UID:GID matches host user UID:GID (beeware/briefcase#403)
 # Use --non-unique to avoid problems when the UID:GID of the host user
@@ -51,22 +64,7 @@ ARG HOST_GID
 RUN groupadd --non-unique --gid $HOST_GID briefcase && \
     useradd --non-unique --uid $HOST_UID --gid $HOST_GID brutus --home /home/brutus && \
     mkdir -p /home/brutus && chown brutus:briefcase /home/brutus
-{%- endif %}
 
-# As root, install system packages required by app
-ARG SYSTEM_REQUIRES
-{% if cookiecutter.vendor_base == "debian" -%}
-RUN apt-get install --no-install-recommends -y build-essential ${SYSTEM_REQUIRES}
-{%- elif cookiecutter.vendor_base == "rhel" -%}
-RUN dnf install -y rpm-build gcc make pkgconf-pkg-config ${SYSTEM_REQUIRES}
-{%- elif cookiecutter.vendor_base == "suse" -%}
-RUN zypper install -y -t pattern devel_basis
-RUN zypper install -y rpm-build pkgconf-pkg-config ${SYSTEM_REQUIRES}
-{%- elif cookiecutter.vendor_base == "arch" -%}
-RUN pacman -Syu  --noconfirm base-devel ${SYSTEM_REQUIRES}
-{%- endif %}
-
-{% if cookiecutter.use_non_root_user -%}
 # Use the brutus user for operations in the container
 USER brutus
 {%- endif %}
