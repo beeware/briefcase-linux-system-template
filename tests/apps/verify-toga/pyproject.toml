@@ -20,7 +20,7 @@ requires = [
 
 [tool.briefcase.app.verify-toga.linux]
 requires = [
-    "toga-gtk~=0.3.0",
+    "toga-gtk~=0.4.0",
 ]
 
 [tool.briefcase.app.verify-toga.linux.system.debian]
