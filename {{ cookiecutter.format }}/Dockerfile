@@ -44,7 +44,8 @@ RUN PIP_BREAK_SYSTEM_PACKAGES=1 \
 # As root, install system packages required by app
 ARG SYSTEM_REQUIRES
 {% if cookiecutter.vendor_base == "debian" -%}
-RUN apt-get install --no-install-recommends -y build-essential ${SYSTEM_REQUIRES}
+RUN apt-get update -y && \
+    apt-get install --no-install-recommends -y build-essential ${SYSTEM_REQUIRES}
 {%- elif cookiecutter.vendor_base == "rhel" -%}
 RUN dnf install -y rpm-build gcc make pkgconf-pkg-config ${SYSTEM_REQUIRES}
 {%- elif cookiecutter.vendor_base == "suse" -%}
