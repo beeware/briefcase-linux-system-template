@@ -45,21 +45,20 @@ RUN PIP_BREAK_SYSTEM_PACKAGES=1 \
 ARG SYSTEM_REQUIRES
 {% if cookiecutter.vendor_base == "debian" -%}
 RUN apt-get update -y && \
-    apt-get install --no-install-recommends -y build-essential ${SYSTEM_REQUIRES}
+    apt-get install --no-install-recommends -y build-essential pkg-config git ${SYSTEM_REQUIRES}
 {%- elif cookiecutter.vendor_base == "rhel" -%}
-RUN dnf install -y rpm-build gcc make pkgconf-pkg-config ${SYSTEM_REQUIRES}
+RUN dnf install -y gcc make rpm-build pkgconf-pkg-config git ${SYSTEM_REQUIRES}
 {%- elif cookiecutter.vendor_base == "suse" -%}
 RUN zypper install -y -t pattern devel_basis
-RUN zypper install -y pwdutils rpm-build pkgconf-pkg-config ${SYSTEM_REQUIRES}
+RUN zypper install -y rpm-build pkgconf-pkg-config git ${SYSTEM_REQUIRES}
 {%- elif cookiecutter.vendor_base == "arch" -%}
-RUN pacman -Syu  --noconfirm base-devel ${SYSTEM_REQUIRES}
+RUN pacman -Syu --noconfirm base-devel pkgconf git ${SYSTEM_REQUIRES}
 {%- endif %}
 
 {% if cookiecutter.use_non_root_user -%}
 # Ensure Docker user UID:GID matches host user UID:GID (beeware/briefcase#403)
 # Use --non-unique to avoid problems when the UID:GID of the host user
 # collides with entries provided by the Docker container.
-# Create Briefcase data dir so Docker's bind mount doesn't assign root as owner of .cache at runtime.
 ARG HOST_UID
 ARG HOST_GID
 RUN groupadd --non-unique --gid $HOST_GID briefcase && \
