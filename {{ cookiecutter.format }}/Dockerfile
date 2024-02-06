@@ -3,9 +3,10 @@ FROM {{ cookiecutter.docker_base_image }}
 # Set the working directory
 WORKDIR /app
 
-# Disable pip's warnings
+# Disable pip's warnings and SDL audio
 ENV PIP_ROOT_USER_ACTION=ignore \
-    PIP_NO_WARN_SCRIPT_LOCATION=0
+    PIP_NO_WARN_SCRIPT_LOCATION=0 \
+    SDL_AUDIODRIVER=dummy
 
 {% if cookiecutter.vendor_base == "debian" -%}
 # Run apt non-interactively; use ARG so this only applies while building the image
