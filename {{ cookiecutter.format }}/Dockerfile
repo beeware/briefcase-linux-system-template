@@ -50,8 +50,9 @@ RUN apt-get update -y && \
 {%- elif cookiecutter.vendor_base == "rhel" -%}
 RUN dnf install -y gcc make rpm-build pkgconf-pkg-config git ${SYSTEM_REQUIRES}
 {%- elif cookiecutter.vendor_base == "suse" -%}
-RUN zypper install -y -t pattern devel_basis
 RUN zypper install -y rpm-build pkgconf-pkg-config git ${SYSTEM_REQUIRES}
+# devel_basis must be installed *after* rpm-build to prevent installing busybox
+RUN zypper install -y -t pattern devel_basis
 {%- elif cookiecutter.vendor_base == "arch" -%}
 RUN pacman -Syu --noconfirm base-devel pkgconf git ${SYSTEM_REQUIRES}
 {%- endif %}
