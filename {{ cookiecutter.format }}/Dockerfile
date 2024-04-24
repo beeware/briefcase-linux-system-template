@@ -37,9 +37,12 @@ RUN pacman -Syu --noconfirm \
 
 # Upgrade pip et alia
 # PEP 668 allows distros to mark the system Python as "externally managed". With this
-# configuration, `pip install` will error when using the system Python. This setting
-# ignores this configuration in the distro and allows for installing the latest pip.
+# configuration in the distro, `pip install` will error when using the system Python.
+# PIP_BREAK_SYSTEM_PACKAGES allows pip to ignore this safeguard and when combined with
+# PIP_IGNORE_INSTALLED, pip will altogether ignore the distro-managed versions of these
+# packages and install the latest versions to /usr/local/.
 RUN PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PIP_IGNORE_INSTALLED=1 \
     python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # As root, install system packages required by app
