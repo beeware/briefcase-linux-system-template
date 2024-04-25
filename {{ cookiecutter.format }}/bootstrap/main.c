@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
     // Establish where the executable is located;
     // other application paths will be computed relative to this location
     exe_path = realpath("/proc/self/exe", NULL);
-    bin_path = dirname(exe_path);
+    bin_path = dirname(strdup(exe_path));
     install_path = dirname(bin_path);
     printf("Install path: %s\n", install_path);
 
@@ -63,6 +63,14 @@ int main(int argc, char *argv[]) {
     status = Py_PreInitialize(&preconfig);
     if (PyStatus_Exception(status)) {
         // crash_dialog("Unable to pre-initialize Python interpreter: %s", status.err_msg, nil]);
+        PyConfig_Clear(&config);
+        Py_ExitStatusException(status);
+    }
+
+    // Set the executable name to match the actual executable
+    status = PyConfig_SetBytesString(&config, &config.executable, exe_path);
+    if (PyStatus_Exception(status)) {
+        // crash_dialog("Unable to set executable name: %s", status.err_msg);
         PyConfig_Clear(&config);
         Py_ExitStatusException(status);
     }
