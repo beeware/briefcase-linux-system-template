@@ -26,13 +26,14 @@ RUN dnf install -y \
 {%- elif cookiecutter.vendor_base == "suse" -%}
 # Install System python
 RUN zypper install -y \
-    python{{ cookiecutter.python_version|py_tag }}-devel \
-    python{{ cookiecutter.python_version|py_tag }}-pip
+      python{{ cookiecutter.python_version|py_tag }}-devel \
+      python{{ cookiecutter.python_version|py_tag }}-pip
 {%- elif cookiecutter.vendor_base == "arch" -%}
 # Install System python
 RUN pacman -Syu --noconfirm \
-    python{{ cookiecutter.python_version|py_tag }} \
-    python-pip
+      python{{ cookiecutter.python_version|py_tag }} \
+      python-pip \
+      python-setuptools
 {%- endif %}
 
 # Upgrade pip et alia
