@@ -32,7 +32,8 @@ RUN zypper install -y \
 # Install System python
 RUN pacman -Syu --noconfirm \
     python{{ cookiecutter.python_version|py_tag }} \
-    python-pip
+    python-pip \
+    python-setuptools
 {%- endif %}
 
 # Upgrade pip et alia
