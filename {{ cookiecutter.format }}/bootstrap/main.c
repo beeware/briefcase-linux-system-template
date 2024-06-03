@@ -10,6 +10,11 @@
 
 #include "pyversion.h"
 
+// A global indicator of the debug level
+char *debug_mode;
+
+void debug_log(const char *format, ...);
+
 int main(int argc, char *argv[]) {
     int ret = 0;
     PyStatus status;
@@ -31,12 +36,15 @@ int main(int argc, char *argv[]) {
     PyObject *exc_traceback;
     PyObject *systemExit_code;
 
+    // Set the global debug state based on the runtime environment
+    debug_mode = getenv("BRIEFCASE_DEBUG");
+
     // Establish where the executable is located;
     // other application paths will be computed relative to this location
     exe_path = realpath("/proc/self/exe", NULL);
     bin_path = dirname(strdup(exe_path));
     install_path = dirname(bin_path);
-    printf("Install path: %s\n", install_path);
+    debug_log("Install path: %s\n", install_path);
 
     // Generate an isolated Python configuration.
     PyPreConfig_InitIsolatedConfig(&preconfig);
@@ -59,7 +67,7 @@ int main(int argc, char *argv[]) {
     // into the running app's sys.path.
     config.site_import = 0;
 
-    printf("Pre-initializing Python runtime...\n");
+    debug_log("Pre-initializing Python runtime...\n");
     status = Py_PreInitialize(&preconfig);
     if (PyStatus_Exception(status)) {
         // crash_dialog("Unable to pre-initialize Python interpreter: %s", status.err_msg, nil]);
@@ -68,6 +76,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Set the executable name to match the actual executable
+    debug_log("config.executable: %s\n", exe_path);
     status = PyConfig_SetBytesString(&config, &config.executable, exe_path);
     if (PyStatus_Exception(status)) {
         // crash_dialog("Unable to set executable name: %s", status.err_msg);
@@ -83,6 +92,7 @@ int main(int argc, char *argv[]) {
     if (app_module_name == NULL) {
         app_module_name = "{{ cookiecutter.module_name }}";
     }
+    debug_log("config.run_module: %s\n", app_module_name);
     status = PyConfig_SetBytesString(&config, &config.run_module, app_module_name);
     if (PyStatus_Exception(status)) {
         // crash_dialog("Unable to set app module name: %s", status.err_msg);
@@ -99,12 +109,12 @@ int main(int argc, char *argv[]) {
     }
 
     // Set the full module path. This includes the stdlib, site-packages, and app code.
-    printf("PYTHONPATH:\n");
+    debug_log("PYTHONPATH:\n");
     path = malloc(PATH_MAX);
 
     // The unpacked form of the stdlib
     strcpy(path, "/usr/{{ cookiecutter.lib_dir }}/python" PY_TAG);
-    printf("- %s\n", path);
+    debug_log("- %s\n", path);
     wtmp_str = Py_DecodeLocale(path, NULL);
     status = PyWideStringList_Append(&config.module_search_paths, wtmp_str);
     if (PyStatus_Exception(status)) {
@@ -116,7 +126,7 @@ int main(int argc, char *argv[]) {
 
     // Add the stdlib binary modules path
     strcpy(path, "/usr/{{ cookiecutter.lib_dir }}/python" PY_TAG "/lib-dynload");
-    printf("- %s\n", path);
+    debug_log("- %s\n", path);
     wtmp_str = Py_DecodeLocale(path, NULL);
     status = PyWideStringList_Append(&config.module_search_paths, wtmp_str);
     if (PyStatus_Exception(status)) {
@@ -129,7 +139,7 @@ int main(int argc, char *argv[]) {
     // Add the app path
     strcpy(path, install_path);
     strcat(path, "/{{ cookiecutter.lib_dir }}/{{ cookiecutter.app_name }}/app");
-    printf("- %s\n", path);
+    debug_log("- %s\n", path);
     wtmp_str = Py_DecodeLocale(path, NULL);
     status = PyWideStringList_Append(&config.module_search_paths, wtmp_str);
     if (PyStatus_Exception(status)) {
@@ -142,7 +152,7 @@ int main(int argc, char *argv[]) {
     // Add the app_packages path
     strcpy(path, install_path);
     strcat(path, "/{{ cookiecutter.lib_dir }}/{{ cookiecutter.app_name }}/app_packages");
-    printf("- %s\n", path);
+    debug_log("- %s\n", path);
     wtmp_str = Py_DecodeLocale(path, NULL);
     status = PyWideStringList_Append(&config.module_search_paths, wtmp_str);
     if (PyStatus_Exception(status)) {
@@ -154,7 +164,7 @@ int main(int argc, char *argv[]) {
 
     free(path);
 
-    printf("Configure argc/argv...\n");
+    debug_log("Configure argc/argv...\n");
     status = PyConfig_SetBytesArgv(&config, argc, argv);
     if (PyStatus_Exception(status)) {
         // crash_dialog("Unable to configured argc/argv: %s", status.err_msg);
@@ -162,7 +172,7 @@ int main(int argc, char *argv[]) {
         Py_ExitStatusException(status);
     }
 
-    printf("Initializing Python runtime...\n");
+    debug_log("Initializing Python runtime...\n");
     status = Py_InitializeFromConfig(&config);
     if (PyStatus_Exception(status)) {
         // crash_dialog("Unable to initialize Python interpreter: %s", status.err_msg);
@@ -177,7 +187,7 @@ int main(int argc, char *argv[]) {
     // pymain_run_module() method); we need to re-implement it
     // because we need to be able to inspect the error state of
     // the interpreter, not just the return code of the module.
-    printf("Running app module: %s\n", app_module_name);
+    debug_log("Running app module: %s\n", app_module_name);
     module = PyImport_ImportModule("runpy");
     if (module == NULL) {
         // crash_dialog(@"Could not import runpy module");
@@ -204,7 +214,7 @@ int main(int argc, char *argv[]) {
 
     // Print a separator to differentiate Python startup logs from app logs,
     // then flush stdout/stderr to ensure all startup logs have been output.
-    printf("---------------------------------------------------------------------------\n");
+    debug_log("---------------------------------------------------------------------------\n");
     fflush(stdout);
     fflush(stderr);
 
@@ -224,18 +234,17 @@ int main(int argc, char *argv[]) {
         if (PyErr_GivenExceptionMatches(exc_value, PyExc_SystemExit)) {
             systemExit_code = PyObject_GetAttrString(exc_value, "code");
             if (systemExit_code == NULL) {
-                printf("Could not determine exit code\n");
+                debug_log("Could not determine exit code\n");
                 ret = -10;
             }
             else {
                 ret = (int) PyLong_AsLong(systemExit_code);
             }
         } else {
+            // Non-SystemExit; likely an uncaught exception
             ret = -6;
-        }
-
-        if (ret != 0) {
-            printf("Application quit abnormally (Exit code %d)!\n", ret);
+            printf("---------------------------------------------------------------------------\n");
+            printf("Application quit abnormally!\n");
 
             // Restore the error state of the interpreter.
             PyErr_Restore(exc_type, exc_value, exc_traceback);
@@ -243,12 +252,19 @@ int main(int argc, char *argv[]) {
             // Print exception to stderr.
             // In case of SystemExit, this will call exit()
             PyErr_Print();
-
-            exit(ret);
         }
     }
 
     Py_Finalize();
 
     return ret;
+}
+
+void debug_log(const char *format, ...) {
+    if (debug_mode) {
+        va_list args;
+        va_start(args, format);
+        vprintf(format, args);
+        va_end(args);
+    }
 }
