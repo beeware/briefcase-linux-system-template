@@ -38,5 +38,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
+        python-version: [ "system", "3.9", "3.10", "3.11", "3.12", "3.13" ]
         framework: [ "toga", "pyside6", "pygame", "console" ]
+        exclude:
+          # PySide6 doesn't support Python 3.13 yet
+          - python-version: 3.13
+            framework: pyside6
