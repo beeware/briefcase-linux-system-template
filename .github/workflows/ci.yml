@@ -31,7 +31,7 @@ jobs:
     uses: beeware/.github/.github/workflows/app-build-verify.yml@main
     with:
       python-version: ${{ matrix.python-version }}
-      runner-os: ubuntu-latest
+      runner-os: ${{ matrix.runner-os }}
       framework: ${{ matrix.framework }}
       target-platform: Linux
       target-format: system
@@ -40,3 +40,4 @@ jobs:
       matrix:
         python-version: [ "system", "3.9", "3.10", "3.11", "3.12", "3.13" ]
         framework: [ "toga", "pyside6", "pygame", "console" ]
+        runner-os: [ "ubuntu-24.04", "ubuntu-24.04-arm" ]
