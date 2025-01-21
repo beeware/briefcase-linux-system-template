@@ -241,17 +241,16 @@ int main(int argc, char *argv[]) {
                 ret = (int) PyLong_AsLong(systemExit_code);
             } else {
                 // SystemExit with a string for an error code.
-                ret = -11;
+                ret = 1;
             }
         } else {
             // Non-SystemExit; likely an uncaught exception
+            printf("---------------------------------------------------------------------------\n");
+            printf("Application quit abnormally!\n");
             ret = -6;
         }
 
         if (ret != 0) {
-            printf("---------------------------------------------------------------------------\n");
-            printf("Application quit abnormally!\n");
-
             // Restore the error state of the interpreter, and print exception
             // to stderr. In the case of a SystemExit, this will exit with a
             // status of 1.
