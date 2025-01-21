@@ -236,6 +236,10 @@ int main(int argc, char *argv[]) {
             if (systemExit_code == NULL) {
                 debug_log("Could not determine exit code\n");
                 ret = -10;
+            } else if (systemExit_code == Py_None) {
+                // SystemExit with a code of None; documented as a return code
+                // of 0.
+                ret = 0;
             } else if (PyLong_Check(systemExit_code)) {
                 // SystemExit with error code
                 ret = (int) PyLong_AsLong(systemExit_code);
