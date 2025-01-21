@@ -236,9 +236,17 @@ int main(int argc, char *argv[]) {
             if (systemExit_code == NULL) {
                 debug_log("Could not determine exit code\n");
                 ret = -10;
-            }
-            else {
+            } else if (PyLong_Check(systemExit_code)) {
+                // SystemExit with error code
                 ret = (int) PyLong_AsLong(systemExit_code);
+            } else {
+                // Convert exit code to a string. This is required by runpy._error
+                ret = -11;
+                printf("---------------------------------------------------------------------------\n");
+                printf("Application quit abnormally!\n");
+
+                // Display exit message in the crash dialog.
+                PyObject_Print(systemExit_code, stdout, Py_PRINT_RAW);
             }
         } else {
             // Non-SystemExit; likely an uncaught exception
