@@ -240,25 +240,22 @@ int main(int argc, char *argv[]) {
                 // SystemExit with error code
                 ret = (int) PyLong_AsLong(systemExit_code);
             } else {
-                // Convert exit code to a string. This is required by runpy._error
+                // SystemExit with a string for an error code.
                 ret = -11;
-                printf("---------------------------------------------------------------------------\n");
-                printf("Application quit abnormally!\n");
-
-                // Display exit message in the crash dialog.
-                PyObject_Print(systemExit_code, stdout, Py_PRINT_RAW);
             }
         } else {
             // Non-SystemExit; likely an uncaught exception
             ret = -6;
+        }
+
+        if (ret != 0) {
             printf("---------------------------------------------------------------------------\n");
             printf("Application quit abnormally!\n");
 
-            // Restore the error state of the interpreter.
+            // Restore the error state of the interpreter, and print exception
+            // to stderr. In the case of a SystemExit, this will exit with a
+            // status of 1.
             PyErr_Restore(exc_type, exc_value, exc_traceback);
-
-            // Print exception to stderr.
-            // In case of SystemExit, this will call exit()
             PyErr_Print();
         }
     }
