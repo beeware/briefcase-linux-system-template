@@ -236,21 +236,29 @@ int main(int argc, char *argv[]) {
             if (systemExit_code == NULL) {
                 debug_log("Could not determine exit code\n");
                 ret = -10;
-            }
-            else {
+            } else if (systemExit_code == Py_None) {
+                // SystemExit with a code of None; documented as a return code
+                // of 0.
+                ret = 0;
+            } else if (PyLong_Check(systemExit_code)) {
+                // SystemExit with error code
                 ret = (int) PyLong_AsLong(systemExit_code);
+            } else {
+                // SystemExit with a string for an error code.
+                ret = 1;
             }
         } else {
             // Non-SystemExit; likely an uncaught exception
-            ret = -6;
             printf("---------------------------------------------------------------------------\n");
             printf("Application quit abnormally!\n");
+            ret = -6;
+        }
 
-            // Restore the error state of the interpreter.
+        if (ret != 0) {
+            // Restore the error state of the interpreter, and print exception
+            // to stderr. In the case of a SystemExit, this will exit with a
+            // status of 1.
             PyErr_Restore(exc_type, exc_value, exc_traceback);
-
-            // Print exception to stderr.
-            // In case of SystemExit, this will call exit()
             PyErr_Print();
         }
     }
