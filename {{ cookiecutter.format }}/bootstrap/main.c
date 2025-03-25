@@ -26,6 +26,8 @@ int main(int argc, char *argv[]) {
     char *bin_path;
     char *install_path;
     wchar_t *wtmp_str;
+    wchar_t *app_packages_path_str;
+    PyObject *app_packages_path;
     PyObject *app_module;
     PyObject *module;
     PyObject *module_attr;
@@ -149,21 +151,6 @@ int main(int argc, char *argv[]) {
     }
     PyMem_RawFree(wtmp_str);
 
-    // Add the app_packages path
-    strcpy(path, install_path);
-    strcat(path, "/{{ cookiecutter.lib_dir }}/{{ cookiecutter.app_name }}/app_packages");
-    debug_log("- %s\n", path);
-    wtmp_str = Py_DecodeLocale(path, NULL);
-    status = PyWideStringList_Append(&config.module_search_paths, wtmp_str);
-    if (PyStatus_Exception(status)) {
-        // crash_dialog("Unable to set app path: %s", status.err_msg);
-        PyConfig_Clear(&config);
-        Py_ExitStatusException(status);
-    }
-    PyMem_RawFree(wtmp_str);
-
-    free(path);
-
     debug_log("Configure argc/argv...\n");
     status = PyConfig_SetBytesArgv(&config, argc, argv);
     if (PyStatus_Exception(status)) {
@@ -179,6 +166,50 @@ int main(int argc, char *argv[]) {
         PyConfig_Clear(&config);
         Py_ExitStatusException(status);
     }
+
+
+    // Adding the app_packages as site directory.
+    //
+    // This adds app_packages to sys.path and executes any .pth
+    // files in that directory.
+    strcpy(path, install_path);
+    strcat(path, "/{{ cookiecutter.lib_dir }}/{{ cookiecutter.app_name }}/app_packages");
+    app_packages_path_str = Py_DecodeLocale(path, NULL);
+    free(path);
+
+    debug_log("Adding app_packages as site directory: %S\n", app_packages_path_str);
+
+    module = PyImport_ImportModule("site");
+    if (module == NULL) {
+        // crash_dialog("Could not import site module");
+        exit(-11);
+    }
+
+    module_attr = PyObject_GetAttrString(module, "addsitedir");
+    if (module_attr == NULL || !PyCallable_Check(module_attr)) {
+        // crash_dialog("Could not access site.addsitedir");
+        exit(-12);
+    }
+
+    app_packages_path = PyUnicode_FromWideChar(app_packages_path_str, wcslen(app_packages_path_str));
+    if (app_packages_path == NULL) {
+        //crash_dialog("Could not convert app_packages path to unicode");
+        exit(-13);
+    }
+    PyMem_RawFree(app_packages_path_str);
+
+    method_args = Py_BuildValue("(O)", app_packages_path);
+    if (method_args == NULL) {
+        // crash_dialog("Could not create arguments for site.addsitedir");
+        exit(-14);
+    }
+
+    result = PyObject_CallObject(module_attr, method_args);
+    if (result == NULL) {
+        // crash_dialog("Could not add app_packages directory using site.addsitedir");
+        exit(-15);
+    }
+
 
     // Start the app module.
     //
