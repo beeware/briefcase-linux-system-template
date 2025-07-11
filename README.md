@@ -4,7 +4,7 @@ A [Cookiecutter](https://github.com/cookiecutter/cookiecutter/) template
 for building Python apps that will run under Linux, packaged as native
 system packages.
 
-# Using this template
+## Using this template
 
 The easiest way to use this project is to not use it at all - at least,
 not directly. [Briefcase](https://github.com/beeware/briefcase/) is a
@@ -80,7 +80,7 @@ This will project a `project.deb` file that you can install with:
 
     $ sudo apt install -f project.deb
 
-# Next steps
+## Next steps
 
 Of course, running Python code isn't very interesting by itself.
 
