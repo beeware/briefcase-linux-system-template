@@ -1,7 +1,3 @@
----
-title: Briefcase Linux System App Template
----
-
 A [Cookiecutter](https://github.com/cookiecutter/cookiecutter/) template
 for building Python apps that will run under Linux, packaged as native
 system packages.
