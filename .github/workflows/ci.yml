@@ -38,6 +38,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "system", "3.9", "3.10", "3.11", "3.12", "3.13" ]
+        python-version: [ "system", "3.10", "3.11", "3.12", "3.13", "3.14" ]
         framework: [ "toga", "pyside6", "pygame", "console" ]
         runner-os: [ "ubuntu-24.04", "ubuntu-24.04-arm" ]
+        # Pygame and PySide6 haven't published 3.14 wheels yet.
+        exclude:
+          - python-version: "3.14"
+            framework: pyside6
+            runner-os: "ubuntu-24.04"
+          - python-version: "3.14"
+            framework: pyside6
+            runner-os: "ubuntu-24.04-arm"
+          - python-version: "3.14"
+            framework: pygame
+            runner-os: "ubuntu-24.04"
+          - python-version: "3.14"
+            framework: pygame
+            runner-os: "ubuntu-24.04-arm"
