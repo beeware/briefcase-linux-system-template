@@ -5,3 +5,4 @@ Exec=/usr/bin/{{ cookiecutter.app_name }} %F
 Icon={{ cookiecutter.bundle_identifier }}
 Categories=Utility;
 Comment={{ cookiecutter.description }}
+StartupWMClass={{ cookiecutter.app_name }}
