@@ -212,9 +212,8 @@ int main(int argc, char *argv[]) {
         exit(-15);
     }
 
-
-    // Point sys.executable at /usr/bin/python so that the app can start Python subprocesses.
     {% if cookiecutter.allow_subprocesses %}
+    // Point sys.executable at /usr/bin/python so that the app can start Python subprocesses.
     strcpy(path, "/usr/bin/python" PY_TAG);
     debug_log("Setting sys.executable: %s\n", path);
     module_attr = PyUnicode_FromString(path);
