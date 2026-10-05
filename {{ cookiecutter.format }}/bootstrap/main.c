@@ -179,8 +179,6 @@ int main(int argc, char *argv[]) {
     strcpy(path, install_path);
     strcat(path, "/{{ cookiecutter.lib_dir }}/{{ cookiecutter.app_name }}/app_packages");
     app_packages_path_str = Py_DecodeLocale(path, NULL);
-    free(path);
-
     debug_log("Adding app_packages as site directory: %S\n", app_packages_path_str);
 
     module = PyImport_ImportModule("site");
@@ -214,6 +212,26 @@ int main(int argc, char *argv[]) {
         exit(-15);
     }
 
+    {% if cookiecutter.allow_subprocesses %}
+    // Point sys.executable at /usr/bin/python so that the app can start Python subprocesses.
+    strcpy(path, "/usr/bin/python" PY_TAG);
+    debug_log("Setting sys.executable: %s\n", path);
+    module_attr = PyUnicode_FromString(path);
+    {% else %}
+    // Clear sys.executable so that subprocesses using that property don't fork-bomb.
+    debug_log("Clearing sys.executable");
+    module_attr = PyUnicode_FromString("");
+    {% endif -%}
+
+    if (module_attr == NULL
+        || PySys_SetObject("executable", module_attr) < 0
+        || PySys_SetObject("_base_executable", module_attr) < 0) {
+        // crash_dialog("Could not set sys.executable");
+        exit(-16);
+    }
+    Py_DECREF(module_attr);
+
+    free(path);
 
     // Start the app module.
     //
